@@ -220,10 +220,10 @@ Notes:
 `create_section`, `update_section`, `create_sections`, `delete_sections`, `move_section`, `get_sections`, `update_sections`, `duplicate_section`, `reorder_sections`, `hide_section`, `release_section`
 
 ### Content
-`publish_class_lesson`, `publish_preview`, `confirm_preview`, `delete_resource`, `generate_video`
+`publish_class_lesson`, `create_activity`, `update_activity`, `publish_preview`, `confirm_preview`, `delete_resource`, `generate_video`
 
 ### Assessment
-`configure_quiz`, `import_gift`, `modify_question`, `get_quiz_questions`, `publish_exam_lesson`
+`configure_quiz`, `create_quiz`, `update_quiz`, `import_gift`, `modify_question`, `get_quiz_questions`, `publish_exam_lesson`
 
 ### Communication
 `create_forum`, `create_forum_announcement`, `send_moodle_message`, `get_site_info`, `get_course_logs`
