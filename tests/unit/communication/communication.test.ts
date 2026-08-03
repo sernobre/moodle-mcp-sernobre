@@ -189,6 +189,9 @@ describe('get_site_info', () => {
     expect(p.sitename).toBe('Moodle');
     expect(p.user.username).toBe('bot');
     expect(p.functions_count).toBe(2);
+    expect(p.core_uploads_allowed).toBe(true);
+    expect(p.custom_upload_available).toBe(false);
+    expect(p.uploads_allowed).toBe(true);
     expect(p.functions).toBeUndefined();
   });
 

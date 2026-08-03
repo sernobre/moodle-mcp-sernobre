@@ -72,7 +72,9 @@ async function execute(args: GetSiteInfoInput, ctx: ToolContext): Promise<ToolRe
         username: info.username,
         lang: info.lang ?? null,
       },
-      uploads_allowed: info.uploadfiles === 1,
+      core_uploads_allowed: info.uploadfiles === 1,
+      uploads_allowed: info.uploadfiles === 1 || info.functions?.some((f) => f.name === 'local_sernobre_mcp_upload_file') === true,
+      custom_upload_available: info.functions === undefined ? null : info.functions.some((f) => f.name === 'local_sernobre_mcp_upload_file'),
       downloads_allowed: info.downloadfiles === 1,
     };
 
