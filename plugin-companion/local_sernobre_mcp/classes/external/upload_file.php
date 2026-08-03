@@ -75,6 +75,10 @@ class upload_file extends external_api {
             'filename'  => $params['filename'],
         ];
 
+        if ($params['mimetype'] !== '') {
+            $fileinfo['mimetype'] = $params['mimetype'];
+        }
+
         // Delete existing file with same name to get idempotency.
         $existing = $fs->get_file(
             $context->id,
@@ -90,9 +94,16 @@ class upload_file extends external_api {
 
         $storedfile = $fs->create_file_from_string($fileinfo, $content);
 
-        // Build the pluginfile URL (served publicly without login only if
-        // we register a pluginfile callback — for now assume logged-in
-        // access, which is the common Moodle default for course content).
+        // Build the pluginfile URL. Office documents and PDFs are downloads.
+        $download = in_array($storedfile->get_mimetype(), [
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/pdf',
+        ], true);
         $url = \moodle_url::make_pluginfile_url(
             $storedfile->get_contextid(),
             $storedfile->get_component(),
@@ -100,7 +111,7 @@ class upload_file extends external_api {
             $storedfile->get_itemid(),
             $storedfile->get_filepath(),
             $storedfile->get_filename(),
-            false  // $forcedownload = false (preview inline when possible)
+            $download
         )->out(false);
 
         return [

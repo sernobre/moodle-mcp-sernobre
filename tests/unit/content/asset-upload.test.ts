@@ -47,6 +47,15 @@ describe('mimeForAsset', () => {
     expect(mimeForAsset('video', 'no-ext')).toBe('video/mp4');
   });
 
+  it('resolves Office document MIME types', () => {
+    expect(mimeForAsset('document', './worksheet.docx')).toBe(
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    );
+    expect(mimeForAsset('document', './slides.pptx')).toBe(
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    );
+  });
+
   it('falls back to octet-stream for unknown type + unknown extension', () => {
     expect(mimeForAsset('other' as never, 'no-ext')).toBe('application/octet-stream');
   });
