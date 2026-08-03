@@ -92,7 +92,7 @@ class update_section extends external_api {
             if ($params['visible'] !== null) {
                 $data->visible = (int)$params['visible'];
             }
-            course_update_section($course, $section, $data);
+            course_update_section($course->id, $section, $data);
 
             // Propagate visibility to every module in the section.
             if ($params['visible'] !== null) {

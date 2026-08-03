@@ -151,7 +151,7 @@ Some tools need the `local_sernobre_mcp` Moodle plugin (`plugin-companion/local_
 
 1. Unzip the archive into `<moodle-root>/local/`.
 2. Go to **Site administration → Notifications** to complete the install/update (a version bump triggers the upgrade flow).
-3. Re-enter the external service created in step 4 and **add all `local_sernobre_mcp_*` functions** (e.g. `upsert_quiz`, `upsert_page`, `upsert_assignment`, `upsert_url`, `upsert_forum`, `add_questions_gift`, `upload_file`, `delete_module_by_idnumber`, `duplicate_section`, …).
+3. Re-enter the external service created in step 4 and **add all `local_sernobre_mcp_*` functions** (e.g. `upsert_quiz`, `upsert_page`, `upsert_assignment`, `upsert_url`, `upsert_forum`, `add_questions_gift`, `upload_file`, `delete_module_by_idnumber`, `duplicate_section`, `create_sections`, `delete_sections`, `move_section`, `get_sections`, `update_sections`, …).
 4. If the server is already running, restart it after updating the plugin.
 
 ### 7. Smoke test
@@ -217,7 +217,7 @@ Notes:
 `create_course`, `update_course`, `duplicate_course`, `archive_course`, `list_my_courses`, `get_course_context`
 
 ### Sections
-`create_section`, `update_section`, `duplicate_section`, `reorder_sections`, `hide_section`, `release_section`
+`create_section`, `update_section`, `create_sections`, `delete_sections`, `move_section`, `get_sections`, `update_sections`, `duplicate_section`, `reorder_sections`, `hide_section`, `release_section`
 
 ### Content
 `publish_class_lesson`, `publish_preview`, `confirm_preview`, `delete_resource`, `generate_video`

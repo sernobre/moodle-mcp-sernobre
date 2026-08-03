@@ -8,6 +8,6 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'local_sernobre_mcp';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = 'v0.8.0';
-$plugin->version   = 2026080306;
+$plugin->version   = 2026080310;
 $plugin->requires  = 2022041900; // Moodle 4.0+
 $plugin->supported = [400, 501]; // Moodle 4.0 to 5.1

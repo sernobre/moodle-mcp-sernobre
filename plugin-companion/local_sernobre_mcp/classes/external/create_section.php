@@ -92,7 +92,7 @@ class create_section extends external_api {
             'visible'       => (int)$params['visible'],
             'timemodified'  => time(),
         ];
-        course_update_section($course, $created, $update);
+        course_update_section($course->id, $created, $update);
 
         rebuild_course_cache($course->id, true);
 
