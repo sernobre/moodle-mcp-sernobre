@@ -40,7 +40,7 @@ export type PublishLessonPlanInput = z.infer<typeof InputSchema>;
  * the whole flow — it creates/updates modules by stable `idnumber`
  * (`upsert_page`/`upsert_url`/`upsert_assignment`/`upsert_forum`/`upsert_quiz`)
  * and manages sections (`create_section`/`update_section`). When a module
- * upsert fails, we surface a `warning` with `status: "missing"` and carry
+ * upsert fails, we surface a `warning` with `status: "failed"` and carry
  * on, so a partially-deployed plugin degrades gracefully instead of
  * aborting the publish.
  */

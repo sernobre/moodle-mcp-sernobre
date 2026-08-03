@@ -16,7 +16,7 @@ export interface ResourceResult {
   type: string;
   url: string | null;
   idnumber: string;
-  status: 'created' | 'updated' | 'skipped' | 'missing';
+  status: 'created' | 'updated' | 'skipped' | 'missing' | 'failed';
   contentlen?: number;
   error?: string;
 }

@@ -44,14 +44,28 @@ export async function ensureSection(
     };
   }
 
-  // 2. Look up existing section by any of the planned module idnumbers.
-  // Moodle sections do not expose their own `idnumber` in the core WS
-  // response, so we identify "our" section indirectly: the section that
-  // already contains at least one module that belongs to this lesson.
+  // 2. Prefer the section explicitly associated with the lesson.
+  if (plan.section.preferred_section_id !== null) {
+    const preferred = contents.find((s) => s.id === plan.section.preferred_section_id);
+    if (preferred) {
+      await setSectionVisibility(ctx, preferred.id, exec.courseId, plan.section.visible);
+      return { section: sectionDescriptor(preferred, plan.section.idnumber), status: 'updated' };
+    }
+    warnings.push(`preferred_section_id ${plan.section.preferred_section_id} was not found; continuing with automatic section matching.`);
+  }
+
+  // 3. Match by normalized name for sections created manually or by an older MCP.
+  const named = contents.find((s) => normalizeSectionName(s.name) === normalizeSectionName(plan.section.name));
+  if (named) {
+    await setSectionVisibility(ctx, named.id, exec.courseId, plan.section.visible);
+    return { section: sectionDescriptor(named, plan.section.idnumber), status: 'updated' };
+  }
+
+  // 4. Otherwise match by any planned module idnumber.
   const plannedModuleIdnumbers = new Set(
     plan.operations
-      .filter((o) => o.kind !== 'upload_asset')
-      .map((o) => o.idnumber),
+.filter((o) => o.kind !== 'upload_asset')
+.map((o) => o.idnumber),
   );
   const existing = contents.find((s) =>
     s.modules.some(
@@ -66,7 +80,7 @@ export async function ensureSection(
     };
   }
 
-  // 3. Section does not exist — try to create a new one via
+  // 5. Section does not exist — try to create a new one via
   // `local_sernobre_mcp_create_section` (idempotent by name). If the
   // call fails, fall back to the preferred / general section with a
   // warning so publish still completes.
@@ -100,11 +114,8 @@ export async function ensureSection(
     );
   }
 
-  // 4. Fallback: use preferred_section_id or section 0 (course General).
-  const fallback =
-    (plan.section.preferred_section_id !== null
-      ? contents.find((s) => s.id === plan.section.preferred_section_id)
-      : undefined) ?? contents[0];
+  // 6. Fallback to the General section.
+  const fallback = contents[0];
   if (!fallback) {
     throw new MoodleWsError(
       `Course ${exec.courseId} has no sections — cannot place the lesson`,
@@ -156,4 +167,8 @@ function sectionDescriptor(s: Section, plannedIdnumber: string) {
     idnumber: plannedIdnumber,
     sectionnum: s.section ?? 0,
   };
+}
+
+function normalizeSectionName(name: string): string {
+  return name.normalize('NFKC').trim().replace(/\s+/g, ' ').toLocaleLowerCase();
 }

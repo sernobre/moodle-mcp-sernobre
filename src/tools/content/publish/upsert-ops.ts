@@ -93,7 +93,7 @@ export async function upsertPageOp(
       type: 'page',
       url: null,
       idnumber: op.idnumber,
-      status: 'missing',
+      status: 'failed',
       error: describeMoodleError(e),
     };
   }
@@ -140,7 +140,7 @@ export async function upsertUrlOp(
       type: 'url',
       url: null,
       idnumber: op.idnumber,
-      status: 'missing',
+      status: 'failed',
       error: describeMoodleError(e),
     };
   }
@@ -186,7 +186,7 @@ export async function upsertAssignmentOp(
       type: 'assign',
       url: null,
       idnumber: op.idnumber,
-      status: 'missing',
+      status: 'failed',
       error: describeMoodleError(e),
     };
   }

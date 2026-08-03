@@ -75,15 +75,28 @@ class get_quiz_questions extends external_api {
         // Get all slots for this quiz, joined with question data.
         $questions = $DB->get_records_sql("
             SELECT qs.id AS slotid,
-                   qs.questionid,
                    q.id,
                    q.name,
                    q.qtype,
-                   qs.slot as slot
+                   qs.slot AS slot
               FROM {quiz_slots} qs
-              JOIN {question_versions} qv ON qv.id = qs.questionversionid
-              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-              JOIN {question} q ON q.id = qbe.questionid
+              JOIN {question_references} qr
+                ON qr.component = 'mod_quiz'
+               AND qr.questionarea = 'slot'
+               AND qr.itemid = qs.id
+              JOIN {question_bank_entries} qbe
+                ON qbe.id = qr.questionbankentryid
+              JOIN {question_versions} qv
+                ON qv.questionbankentryid = qbe.id
+               AND qv.status = 'ready'
+               AND ((qr.version IS NOT NULL AND qv.version = qr.version)
+                    OR (qr.version IS NULL AND qv.version = (
+                        SELECT MAX(qv2.version)
+                          FROM {question_versions} qv2
+                         WHERE qv2.questionbankentryid = qbe.id
+                           AND qv2.status = 'ready'
+                    )))
+              JOIN {question} q ON q.id = qv.questionid
              WHERE qs.quizid = :quizid
              ORDER BY qs.slot ASC
         ", ['quizid' => $quizid]);

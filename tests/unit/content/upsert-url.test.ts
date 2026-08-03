@@ -79,7 +79,7 @@ describe('upsertUrlOp', () => {
     expect(seen.visible).toBe(1);
   });
 
-  it('returns status=missing and logs a warning when the WS call throws', async () => {
+  it('returns status=failed and logs a warning when the WS call throws', async () => {
     const logger = { ...nullLogger, warn: vi.fn() };
     const client = scriptedClient({
       local_sernobre_mcp_upsert_url: () => {
@@ -89,7 +89,7 @@ describe('upsertUrlOp', () => {
 
     const result = await upsertUrlOp({ client, logger }, baseOp, scope);
 
-    expect(result.status).toBe('missing');
+    expect(result.status).toBe('failed');
     expect(result.moodle_id).toBeNull();
     expect(result.url).toBeNull();
     expect(result.type).toBe('url');
