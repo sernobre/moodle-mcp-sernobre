@@ -122,20 +122,52 @@ Or create a `.env` file and load it in your shell (the project does **not** auto
 
 Follow these steps on the Moodle side **before** first use:
 
-1. **Site administration → Server → Web services** — tick **Enable web services** and save.
-2. **Advanced features** — make sure **Enable web services** is on.
-3. Under **External services**, create a **new dedicated service** (recommended for audit clarity) and add the functions below to it. Tick the **Authorized users only** option.
-4. Add at least these core functions:
-   - `core_webservice_get_site_info`
-   - `core_course_get_courses_by_field`
-   - `core_course_get_contents`
-   - `core_enrol_get_enrolled_users`
-   - `core_course_edit_section`
-   - `core_course_edit_module`
-   - the `local_sernobre_mcp_*` functions from the companion plugin (step 6)
-5. Under **Manage tokens**, generate a token for a user with `editingteacher` or `manager` permissions. Copy the token — it is your `MOODLE_WS_TOKEN`.
+1. **Site administration → Server → Web services** — enable web services and the **REST** protocol.
+2. Install/update the companion plugin in step 6 below. During the upgrade, Moodle creates the pre-built **Sernobre MCP** external service with the MCP function allowlist.
+3. Open **External services → Sernobre MCP** and keep **Authorised users only** enabled. Add only the dedicated MCP user.
+4. Under **Manage tokens**, create a token for that user and select the **Sernobre MCP** service. A token created for another service is not interchangeable.
 
-> **Audit tip:** create a dedicated user (e.g. `moodle-mcp-bot`) with `editingteacher` on the relevant courses and generate the token for that user, so Moodle logs clearly distinguish human vs MCP actions.
+The pre-built service includes these core functions:
+
+- `core_webservice_get_site_info`
+- `core_course_get_courses_by_field`
+- `core_course_get_contents`
+- `core_course_create_courses`
+- `core_course_update_courses`
+- `core_course_edit_section`
+- `core_course_edit_module`
+- `core_enrol_get_enrolled_users`
+- `core_calendar_create_calendar_events`
+- `core_calendar_get_calendar_events`
+- `core_calendar_update_event_start_day`
+- `core_calendar_get_allowed_event_types`
+- `mod_forum_get_forums_by_courses`
+- `mod_forum_add_discussion`
+- all `local_sernobre_mcp_*` functions declared by the companion plugin
+
+The token user should have a dedicated least-privilege role in the system or relevant course-category context with these capabilities:
+
+- `moodle/course:create`
+- `moodle/course:update`
+- `moodle/course:view`
+- `moodle/course:manageactivities`
+- `moodle/course:movesections`
+- `moodle/course:sectionvisibility` (only when calling the deprecated core section show/hide API directly)
+- `moodle/question:add`
+- `enrol/manual:config`
+- `moodle/calendar:manageentries`
+- `moodle/calendar:manageownentries`
+- `moodle/calendar:managegroupentries`
+- `mod/forum:viewdiscussion`
+- `mod/forum:startdiscussion`
+- `webservice/rest:use`
+
+
+`mod/forum:pindiscussions` is additionally needed when announcements must be pinned. The companion-plugin section endpoint `local_sernobre_mcp_update_section` requires `moodle/course:update`; it is the preferred route for MCP section edits. The destructive `core_calendar_delete_calendar_events` function is intentionally not in the pre-built service.
+
+Add `moodle/category:manage` only when the MCP user must manage categories. Course deletion is deliberately not exposed by the built-in service; add `core_course_delete_courses` manually only after a separate review.
+
+> **Audit tip:** create a dedicated user such as `moodle-mcp-bot`, assign the minimum role above only where needed, restrict the token by IP when possible, and set a validity date.
 
 ### 5. Start the server
 
@@ -149,9 +181,9 @@ The server starts, emits a `server.start` log line, and waits for MCP traffic ov
 
 Some tools need the `local_sernobre_mcp` Moodle plugin (`plugin-companion/local_sernobre_mcp.zip`):
 
-1. Unzip the archive into `<moodle-root>/local/`.
-2. Go to **Site administration → Notifications** to complete the install/update (a version bump triggers the upgrade flow).
-3. Re-enter the external service created in step 4 and **add all `local_sernobre_mcp_*` functions** (e.g. `upsert_quiz`, `upsert_page`, `upsert_assignment`, `upsert_url`, `upsert_forum`, `add_questions_gift`, `upload_file`, `delete_module_by_idnumber`, `duplicate_section`, `create_sections`, `delete_sections`, `move_section`, `get_sections`, `update_sections`, …).
+1. Upload/unzip the archive into `<moodle-root>/local/`.
+2. Go to **Site administration → Notifications** to complete the install/update. The version bump also registers or updates the pre-built **Sernobre MCP** service.
+3. Use that service when creating the token. Do not create a second service unless you intentionally want a different function allowlist.
 4. If the server is already running, restart it after updating the plugin.
 
 ### 7. Smoke test

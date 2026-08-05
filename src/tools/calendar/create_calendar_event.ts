@@ -66,7 +66,6 @@ async function execute(
       format: 1,
       timestart: args.timestart,
       timeduration: args.timeduration,
-      location: args.location,
       eventtype: args.eventtype,
       repeats: args.repeat_count,
     };
@@ -81,6 +80,10 @@ async function execute(
 
     return toJsonResponse({
       created_count: created.length,
+      warnings:
+        args.location !== ''
+          ? ['Moodle 5.1 core_calendar_create_calendar_events does not accept a location field; the location was not stored.']
+          : [],
       events: created.map((e) => ({
         event_id: e.id,
         name: e.name,

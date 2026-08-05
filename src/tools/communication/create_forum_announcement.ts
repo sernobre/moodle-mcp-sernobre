@@ -36,6 +36,25 @@ interface WsForum {
 }
 
 /**
+ * Moodle's discussion web service accepts HTML only. Keep the public input
+ * format option for backwards compatibility, but convert plain text safely
+ * before sending it to Moodle.
+ */
+function normalizeMessage(message: string, format: CreateForumAnnouncementInput['format']): string {
+  if (format === 'html') {
+    return message;
+  }
+
+  return message
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/\r?\n/g, '<br>\n');
+}
+
+/**
  * Post a new discussion to a course forum. If no forum_id is given,
  * picks the course "Announcements" (news) forum — the default forum
  * that Moodle creates automatically and where teachers post
@@ -74,10 +93,10 @@ async function execute(args: CreateForumAnnouncementInput, ctx: ToolContext): Pr
     const result = (await ctx.client.call('mod_forum_add_discussion', {
       forumid,
       subject: args.subject,
-      message: args.message,
+      message: normalizeMessage(args.message, args.format),
+      groupid: 0,
       options: [
         { name: 'discussionpinned', value: args.pin ? 1 : 0 },
-        { name: 'messageformat', value: args.format === 'html' ? 1 : 0 },
       ],
     })) as { discussionid: number } | undefined;
 

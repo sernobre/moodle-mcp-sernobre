@@ -238,3 +238,59 @@ $functions = [
         'type' => 'write', 'capabilities' => 'moodle/course:update', 'ajax' => true,
     ],
 ];
+
+// Dedicated service for the Sernobre MCP integration.
+// Course deletion is intentionally not included by default.
+$services = [
+    'sernobre_mcp' => [
+        'functions' => [
+            // Core functions used for site discovery and course management.
+            'core_webservice_get_site_info',
+            'core_course_get_courses_by_field',
+            'core_course_get_contents',
+            'core_course_create_courses',
+            'core_course_update_courses',
+            'core_course_edit_section',
+            'core_course_edit_module',
+            'core_enrol_get_enrolled_users',
+            'core_calendar_create_calendar_events',
+            'core_calendar_get_calendar_events',
+            'core_calendar_update_event_start_day',
+            'core_calendar_get_allowed_event_types',
+            'mod_forum_get_forums_by_courses',
+            'mod_forum_add_discussion',
+
+            // Companion-plugin functions.
+            'local_sernobre_mcp_upsert_forum',
+            'local_sernobre_mcp_upsert_page',
+            'local_sernobre_mcp_delete_module_by_idnumber',
+            'local_sernobre_mcp_update_course_summary',
+            'local_sernobre_mcp_upsert_quiz',
+            'local_sernobre_mcp_upload_file',
+            'local_sernobre_mcp_add_questions_gift',
+            'local_sernobre_mcp_delete_module_by_cmid',
+            'local_sernobre_mcp_promote_quiz_questions',
+            'local_sernobre_mcp_repair_quiz_sections',
+            'local_sernobre_mcp_upsert_url',
+            'local_sernobre_mcp_upsert_assignment',
+            'local_sernobre_mcp_promote_all_drafts_in_course',
+            'local_sernobre_mcp_update_question_simple',
+            'local_sernobre_mcp_duplicate_section',
+            'local_sernobre_mcp_get_quiz_questions',
+            'local_sernobre_mcp_ensure_manual_enrolment',
+            'local_sernobre_mcp_create_section',
+            'local_sernobre_mcp_update_section',
+            'local_sernobre_mcp_reorder_sections',
+            'local_sernobre_mcp_create_sections',
+            'local_sernobre_mcp_delete_sections',
+            'local_sernobre_mcp_move_section',
+            'local_sernobre_mcp_get_sections',
+            'local_sernobre_mcp_update_sections',
+        ],
+        'restrictedusers' => 1,
+        'enabled' => 1,
+        'shortname' => 'sernobre_mcp',
+        'downloadfiles' => 0,
+        'uploadfiles' => 0,
+    ],
+];
