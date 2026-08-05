@@ -3,6 +3,16 @@
 All notable changes to `moodle-mcp` (wrapper TS) and `local_sernobre_mcp` (plugin PHP) are documented here.
 Follows [Keep a Changelog](https://keepachangelog.com/).
 
+## Plugin `local_sernobre_mcp` v0.8.7 — 2026-08-05
+
+### Fixed
+- **`add_questions_gift`**: replaced the deprecated `quiz_update_sumgrades()` call with `mod_quiz\quiz_settings::get_grade_calculator()->recompute_quiz_sumgrades()` on Moodle 4.2+/5.x. Moodle 4.0/4.1 keeps the compatibility fallback.
+
+### Migration notes
+- Re-upload `plugin-companion/local_sernobre_mcp.zip` (v0.8.7) and run the Moodle plugin upgrade.
+
+---
+
 ## Plugin `local_sernobre_mcp` v0.1.0 — 2026-08-02
 
 ### Changed

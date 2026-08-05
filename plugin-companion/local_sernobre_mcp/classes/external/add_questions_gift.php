@@ -258,8 +258,17 @@ class add_questions_gift extends external_api {
                 );
             }
 
-            // Recompute sumgrades so grade display is correct.
-            quiz_update_sumgrades($quiz);
+            // Recompute sumgrades using Moodle's non-deprecated quiz API.
+            // quiz_update_sumgrades() was deprecated in Moodle 4.2 and throws
+            // an internal error on Moodle 5.1 with developer debugging enabled.
+            if (class_exists('\mod_quiz\quiz_settings')) {
+                $quizsettings = \mod_quiz\quiz_settings::create((int)$quiz->id);
+                $quizsettings->get_grade_calculator()->recompute_quiz_sumgrades();
+            } else {
+                // Moodle 4.0/4.1 compatibility: the replacement class did not
+                // exist yet in those older supported releases.
+                quiz_update_sumgrades($quiz);
+            }
         }
 
         rebuild_course_cache((int)$course->id, true);

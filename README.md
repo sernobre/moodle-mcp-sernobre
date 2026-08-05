@@ -30,7 +30,7 @@ Besides the TS wrapper, the repository includes a **companion Moodle plugin** (`
 | Component | Version |
 |---|---|
 | TypeScript wrapper (`sernobre-moodle-mcp`) | v0.1.0 |
-| Moodle plugin (`local_sernobre_mcp`) | v0.1.0 |
+| Moodle plugin (`local_sernobre_mcp`) | v0.8.7 |
 
 See [CHANGELOG.md](CHANGELOG.md) for the full history of changes and migration notes.
 
