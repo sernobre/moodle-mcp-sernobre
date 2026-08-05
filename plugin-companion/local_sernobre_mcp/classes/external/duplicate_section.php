@@ -12,7 +12,7 @@ use moodle_url;
 
 global $CFG;
 require_once($CFG->dirroot . '/course/lib.php');
-require_once($CFG->libdir . '/modlib.php');
+require_once($CFG->dirroot . '/course/modlib.php');
 
 /**
  * Duplicate all modules in a course section to a new section.
