@@ -3,6 +3,27 @@
 All notable changes to `moodle-mcp` (wrapper TS) and `local_sernobre_mcp` (plugin PHP) are documented here.
 Follows [Keep a Changelog](https://keepachangelog.com/).
 
+## Plugin local_sernobre_mcp v0.8.9 — 2026-08-06
+
+### Added
+- **`get_assignment_config` (read-only)**: new companion endpoint `local_sernobre_mcp_get_assignment_config` + wrapper tool. Returns, per assignment in a course (optionally filtered by `idnumber` or `cmid`), the enabled submission plugins (`assignsubmission_file`, `assignsubmission_onlinetext`, `assignfeedback_comments`), max files, word limit, max file size, due dates and grade. Fills the gap left by `mod_assign_get_assignments` (not exposed in the service, and it does not report submission plugin state), so agents can confirm programmatically whether an assignment accepts file and/or online-text submissions before submitting.
+
+### Migration notes
+- Re-upload `plugin-companion/local_sernobre_mcp.zip` (v0.8.9), run the Moodle plugin upgrade, purge caches, and rebuild the local MCP server if using `dist/`. The new function is registered in the `sernobre_mcp` service automatically on upgrade.
+
+---
+## Plugin local_sernobre_mcp v0.8.8 — 2026-08-06
+
+### Fixed
+- Assignment file submission: assignments created or updated by upsert_assignment now ensure the native file submission plugin is present without duplicating or overriding existing assignment settings.
+- MCP file submission: added submit_assignment_file, using Moodle’s native draft upload, assignment save, and optional final submission workflow.
+- Sernobre MCP service: added the three core functions required by the new workflow: core_files_upload, mod_assign_save_submission, and mod_assign_submit_for_grading.
+
+### Migration notes
+- Re-upload plugin-companion/local_sernobre_mcp.zip (v0.8.8), run the Moodle plugin upgrade, purge caches, and rebuild the local MCP server if using dist/.
+- Extra functions can be added manually under Site administration -> Plugins -> Web services -> External services -> Sernobre MCP -> Functions. The service allowlist does not grant capabilities; the token user still needs the capability required by each function.
+
+---
 ## Plugin `local_sernobre_mcp` v0.8.7 — 2026-08-05
 
 ### Fixed

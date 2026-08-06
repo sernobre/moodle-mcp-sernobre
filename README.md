@@ -30,7 +30,7 @@ Besides the TS wrapper, the repository includes a **companion Moodle plugin** (`
 | Component | Version |
 |---|---|
 | TypeScript wrapper (`sernobre-moodle-mcp`) | v0.1.0 |
-| Moodle plugin (`local_sernobre_mcp`) | v0.8.7 |
+| Moodle plugin (`local_sernobre_mcp`) | v0.8.8 |
 
 See [CHANGELOG.md](CHANGELOG.md) for the full history of changes and migration notes.
 
@@ -130,6 +130,9 @@ Follow these steps on the Moodle side **before** first use:
 The pre-built service includes these core functions:
 
 - `core_webservice_get_site_info`
+- `core_files_upload`
+- `mod_assign_save_submission`
+- `mod_assign_submit_for_grading`
 - `core_course_get_courses_by_field`
 - `core_course_get_contents`
 - `core_course_create_courses`
@@ -151,6 +154,8 @@ The token user should have a dedicated least-privilege role in the system or rel
 - `moodle/course:update`
 - `moodle/course:view`
 - `moodle/course:manageactivities`
+- `moodle/user:manageownfiles` (needed by Moodle core_files_upload for the current token user)
+- `mod/assign:submit`
 - `moodle/course:movesections`
 - `moodle/course:sectionvisibility` (only when calling the deprecated core section show/hide API directly)
 - `moodle/question:add`
@@ -164,6 +169,8 @@ The token user should have a dedicated least-privilege role in the system or rel
 
 
 `mod/forum:pindiscussions` is additionally needed when announcements must be pinned. The companion-plugin section endpoint `local_sernobre_mcp_update_section` requires `moodle/course:update`; it is the preferred route for MCP section edits. The destructive `core_calendar_delete_calendar_events` function is intentionally not in the pre-built service.
+
+For another existing Moodle function, open **Site administration -> Plugins -> Web services -> External services -> Sernobre MCP -> Functions -> Add functions**. Add only functions needed by the deployment; this allowlist does not replace the capability checks of the token user.
 
 Add `moodle/category:manage` only when the MCP user must manage categories. Course deletion is deliberately not exposed by the built-in service; add `core_course_delete_courses` manually only after a separate review.
 
@@ -261,7 +268,7 @@ Notes:
 `create_forum`, `create_forum_announcement`, `send_moodle_message`, `get_site_info`, `get_course_logs`
 
 ### Gradebook
-`get_grades`, `get_assign_submissions`, `get_completion`, `get_quiz_attempts`, `grade_manually`
+`get_grades`, `get_assign_submissions`, `get_assignment_config`, `get_completion`, `get_quiz_attempts`, `grade_manually`, `submit_assignment_file`
 
 ### Students
 `list_students`, `enrol_csv`, `unenrol_student`, `change_role`, `groups`, `reset_password`

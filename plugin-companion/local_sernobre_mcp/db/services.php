@@ -130,6 +130,14 @@ $functions = [
         'capabilities' => 'moodle/course:view',
         'ajax'         => true,
     ],
+    'local_sernobre_mcp_get_assignment_config' => [
+        'classname'    => 'local_sernobre_mcp\\external\\get_assignment_config',
+        'methodname'   => 'execute',
+        'description'  => 'List submission configuration of mod_assign instances in a course (read-only): enabled submission plugins, max files, word limit, due dates',
+        'type'         => 'read',
+        'capabilities' => 'moodle/course:view',
+        'ajax'         => true,
+    ],
     'local_sernobre_mcp_ensure_manual_enrolment' => [
         'classname'    => 'local_sernobre_mcp\\external\\ensure_manual_enrolment',
         'methodname'   => 'execute',
@@ -246,6 +254,10 @@ $services = [
         'functions' => [
             // Core functions used for site discovery and course management.
             'core_webservice_get_site_info',
+            // Native assignment file submission workflow.
+            'core_files_upload',
+            'mod_assign_save_submission',
+            'mod_assign_submit_for_grading',
             'core_course_get_courses_by_field',
             'core_course_get_contents',
             'core_course_create_courses',
@@ -277,6 +289,7 @@ $services = [
             'local_sernobre_mcp_update_question_simple',
             'local_sernobre_mcp_duplicate_section',
             'local_sernobre_mcp_get_quiz_questions',
+            'local_sernobre_mcp_get_assignment_config',
             'local_sernobre_mcp_ensure_manual_enrolment',
             'local_sernobre_mcp_create_section',
             'local_sernobre_mcp_update_section',

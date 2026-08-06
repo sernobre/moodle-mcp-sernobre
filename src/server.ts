@@ -63,7 +63,7 @@ export function buildServer(opts: BuildServerOptions): Server {
     tools: ALL_TOOLS.map((t) => ({
       name: t.name,
       description: t.description,
-      inputSchema: zodToJsonSchema(t.inputSchema, { target: 'openApi3' }) as Record<
+      inputSchema: zodToJsonSchema(t.inputSchema, { target: 'jsonSchema7' }) as Record<
         string,
         unknown
       >,

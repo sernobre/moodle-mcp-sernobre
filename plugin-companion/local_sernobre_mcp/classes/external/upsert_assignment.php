@@ -130,6 +130,7 @@ class upsert_assignment extends external_api {
             set_coursemodule_visible($existing->id, (int)$params['visible']);
         }
 
+        self::ensure_default_plugins((int)$assignid);
         rebuild_course_cache($course->id, true);
 
         return [
@@ -160,30 +161,43 @@ class upsert_assignment extends external_api {
         $moduleinfo->completion = COMPLETION_DISABLED; $moduleinfo->completionview = COMPLETION_VIEW_NOT_REQUIRED;
         $moduleinfo->completionexpected = 0; $moduleinfo->showdescription = 0;
         $created = \add_moduleinfo($moduleinfo, $course);
+        self::ensure_default_plugins((int)$created->instance);
         rebuild_course_cache($course->id, true);
         return ['action' => 'created', 'cmid' => (int)$created->coursemodule, 'instanceid' => (int)$created->instance,
             'url' => (new moodle_url('/mod/assign/view.php', ['id' => $created->coursemodule]))->out(false)];
     }
     /**
-     * Seed the default submission + feedback plugins for a brand-new
+     * Ensure the default submission + feedback plugins for an
      * assignment. Without this, the student has no way to submit.
      */
-    private static function enable_default_plugins(int $assignid): void {
+    private static function ensure_default_plugins(int $assignid): void {
         global $DB;
 
         $configs = [
-            ['plugin' => 'onlinetext', 'subtype' => 'assignsubmission', 'name' => 'enabled',   'value' => '1'],
+            ['plugin' => 'onlinetext', 'subtype' => 'assignsubmission', 'name' => 'enabled', 'value' => '1'],
             ['plugin' => 'onlinetext', 'subtype' => 'assignsubmission', 'name' => 'wordlimit', 'value' => '0'],
-            ['plugin' => 'file',       'subtype' => 'assignsubmission', 'name' => 'enabled',   'value' => '1'],
-            ['plugin' => 'file',       'subtype' => 'assignsubmission', 'name' => 'maxfilesubmissions', 'value' => '3'],
-            ['plugin' => 'comments',   'subtype' => 'assignfeedback',   'name' => 'enabled',   'value' => '1'],
+            ['plugin' => 'file', 'subtype' => 'assignsubmission', 'name' => 'enabled', 'value' => '1'],
+            ['plugin' => 'file', 'subtype' => 'assignsubmission', 'name' => 'maxfilesubmissions', 'value' => '3'],
+            ['plugin' => 'comments', 'subtype' => 'assignfeedback', 'name' => 'enabled', 'value' => '1'],
         ];
-        foreach ($configs as $cfg) {
-            $row = (object)array_merge($cfg, ['assignment' => $assignid]);
-            $DB->insert_record('assign_plugin_config', $row);
+
+        foreach ($configs as $config) {
+            $conditions = [
+                'assignment' => $assignid,
+                'plugin' => $config['plugin'],
+                'subtype' => $config['subtype'],
+                'name' => $config['name'],
+            ];
+            $existing = $DB->get_record('assign_plugin_config', $conditions, '*', IGNORE_MISSING);
+            if ($existing) {
+                // Never override a deliberate setting changed in Moodle.
+                continue;
+            }
+            $DB->insert_record('assign_plugin_config', (object)array_merge($conditions, [
+                'value' => $config['value'],
+            ]));
         }
     }
-
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'action'     => new external_value(PARAM_ALPHA, 'created or updated'),
