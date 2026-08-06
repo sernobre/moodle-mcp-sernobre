@@ -123,19 +123,15 @@ class get_quiz_questions extends external_api {
             'quiz_id'        => new external_value(PARAM_INT, 'quiz.id'),
             'cmid'           => new external_value(PARAM_INT, 'course_modules.id'),
             'question_count' => new external_value(PARAM_INT, 'number of questions in the quiz'),
-            'questions'      => new external_value(
-                PARAM_RAW,
+            'questions'      => new external_multiple_structure(
+                new external_single_structure([
+                    'id'    => new external_value(PARAM_INT, 'question.id'),
+                    'name'  => new external_value(PARAM_TEXT, 'Question name'),
+                    'qtype' => new external_value(PARAM_INT, 'Question type id'),
+                    'slot'  => new external_value(PARAM_INT, 'Slot number in quiz'),
+                ]),
                 'array of {id, name, qtype, slot}',
-                VALUE_REQUIRED,
-                null,
-                [
-                    new external_single_structure([
-                        'id'    => new external_value(PARAM_INT, 'question.id'),
-                        'name'  => new external_value(PARAM_TEXT, 'Question name'),
-                        'qtype' => new external_value(PARAM_INT, 'Question type id'),
-                        'slot'  => new external_value(PARAM_INT, 'Slot number in quiz'),
-                    ]),
-                ]
+                VALUE_OPTIONAL
             ),
         ]);
     }

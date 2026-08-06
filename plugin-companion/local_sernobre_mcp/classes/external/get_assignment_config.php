@@ -127,45 +127,37 @@ class get_assignment_config extends external_api {
 
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
-            'assignments' => new external_value(
-                PARAM_RAW,
+            'assignments' => new external_multiple_structure(
+                new external_single_structure([
+                    'cmid'                            => new external_value(PARAM_INT, 'course_modules.id'),
+                    'instanceid'                      => new external_value(PARAM_INT, 'assign.id (mod_assign instance)'),
+                    'idnumber'                        => new external_value(PARAM_TEXT, 'course_modules.idnumber'),
+                    'name'                            => new external_value(PARAM_TEXT, 'Assignment name'),
+                    'duedate'                         => new external_value(PARAM_INT, 'Due date as Unix timestamp (0 = none)'),
+                    'allowsubmissionsfromdate'        => new external_value(PARAM_INT, 'Submissions open timestamp (0 = immediately)'),
+                    'cutoffdate'                      => new external_value(PARAM_INT, 'Cutoff timestamp (0 = none)'),
+                    'grade'                           => new external_value(PARAM_INT, 'Max grade'),
+                    'visible'                         => new external_value(PARAM_INT, '1 visible to students, 0 hidden'),
+                    'nosubmissions'                   => new external_value(PARAM_INT, '1 if the assignment accepts no submissions'),
+                    'submission_file_enabled'         => new external_value(PARAM_INT, '1 if assignsubmission_file is enabled'),
+                    'submission_onlinetext_enabled'   => new external_value(PARAM_INT, '1 if assignsubmission_onlinetext is enabled'),
+                    'submission_comments_enabled'     => new external_value(PARAM_INT, '1 if assignfeedback_comments is enabled'),
+                    'maxfilesubmissions'              => new external_value(PARAM_INT, 'max files per submission (file plugin)'),
+                    'wordlimit'                       => new external_value(PARAM_INT, 'online text word limit (0 = none)'),
+                    'maxsubmissionsizebytes'          => new external_value(PARAM_INT, 'max file size in bytes (0 = site default)'),
+                    'plugin_config'                   => new external_multiple_structure(
+                        new external_single_structure([
+                            'plugin'  => new external_value(PARAM_ALPHA, 'plugin name, e.g. file / onlinetext / comments'),
+                            'subtype' => new external_value(PARAM_ALPHA, 'assignsubmission or assignfeedback'),
+                            'name'    => new external_value(PARAM_ALPHANUMEXT, 'setting name'),
+                            'value'   => new external_value(PARAM_RAW, 'setting value'),
+                        ]),
+                        'raw assign_plugin_config rows',
+                        VALUE_OPTIONAL
+                    ),
+                ]),
                 'list of assignments with submission plugin config',
-                VALUE_REQUIRED,
-                null,
-                [
-                    new external_single_structure([
-                        'cmid'                            => new external_value(PARAM_INT, 'course_modules.id'),
-                        'instanceid'                      => new external_value(PARAM_INT, 'assign.id (mod_assign instance)'),
-                        'idnumber'                        => new external_value(PARAM_TEXT, 'course_modules.idnumber'),
-                        'name'                            => new external_value(PARAM_TEXT, 'Assignment name'),
-                        'duedate'                         => new external_value(PARAM_INT, 'Due date as Unix timestamp (0 = none)'),
-                        'allowsubmissionsfromdate'        => new external_value(PARAM_INT, 'Submissions open timestamp (0 = immediately)'),
-                        'cutoffdate'                      => new external_value(PARAM_INT, 'Cutoff timestamp (0 = none)'),
-                        'grade'                           => new external_value(PARAM_INT, 'Max grade'),
-                        'visible'                         => new external_value(PARAM_INT, '1 visible to students, 0 hidden'),
-                        'nosubmissions'                   => new external_value(PARAM_INT, '1 if the assignment accepts no submissions'),
-                        'submission_file_enabled'         => new external_value(PARAM_INT, '1 if assignsubmission_file is enabled'),
-                        'submission_onlinetext_enabled'   => new external_value(PARAM_INT, '1 if assignsubmission_onlinetext is enabled'),
-                        'submission_comments_enabled'     => new external_value(PARAM_INT, '1 if assignfeedback_comments is enabled'),
-                        'maxfilesubmissions'              => new external_value(PARAM_INT, 'max files per submission (file plugin)'),
-                        'wordlimit'                       => new external_value(PARAM_INT, 'online text word limit (0 = none)'),
-                        'maxsubmissionsizebytes'          => new external_value(PARAM_INT, 'max file size in bytes (0 = site default)'),
-                        'plugin_config'                   => new external_value(
-                            PARAM_RAW,
-                            'raw assign_plugin_config rows',
-                            VALUE_REQUIRED,
-                            null,
-                            [
-                                new external_single_structure([
-                                    'plugin'  => new external_value(PARAM_ALPHA, 'plugin name, e.g. file / onlinetext / comments'),
-                                    'subtype' => new external_value(PARAM_ALPHA, 'assignsubmission or assignfeedback'),
-                                    'name'    => new external_value(PARAM_ALPHANUMEXT, 'setting name'),
-                                    'value'   => new external_value(PARAM_RAW, 'setting value'),
-                                ]),
-                            ]
-                        ),
-                    ]),
-                ]
+                VALUE_REQUIRED
             ),
         ]);
     }
