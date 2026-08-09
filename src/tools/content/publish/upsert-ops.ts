@@ -19,6 +19,16 @@ function describeMoodleError(e: unknown): string {
   return parts.filter(Boolean).join(' | ');
 }
 
+/** Extract a short `summary` text from component metadata, if present. */
+function extractComponentSummary(component: Component | undefined): string {
+  if (!component?.metadata || typeof component.metadata !== 'object') return '';
+  const md = component.metadata as Record<string, unknown>;
+  if (typeof md.summary === 'string' && md.summary.trim() !== '') {
+    return renderMarkdown(md.summary);
+  }
+  return '';
+}
+
 /**
  * One `upsert_*` call per lesson component kind. Each op talks to the
  * companion plugin's idempotent endpoint (upsert by `idnumber`) and maps a
@@ -62,7 +72,7 @@ export async function upsertPageOp(
       sectionnum: scope.sectionnum,
       idnumber: op.idnumber,
       name: op.name,
-      intro: '',
+      intro: extractComponentSummary(scope.component),
       content: styledHtml,
       visible: op.visible ? 1 : 0,
     })) as {
@@ -160,10 +170,10 @@ export async function upsertAssignmentOp(
       idnumber: op.idnumber,
       name: op.name,
       intro: introHtml,
-      duedate: 0,
-      allowsubmissionsfromdate: 0,
-      cutoffdate: 0,
-      grade: 100,
+      duedate: op.duedate ?? 0,
+      allowsubmissionsfromdate: op.allowsubmissionsfromdate ?? 0,
+      cutoffdate: op.cutoffdate ?? 0,
+      grade: op.grade ?? 100,
       visible: op.visible ? 1 : 0,
     })) as { action: 'created' | 'updated'; cmid: number; instanceid: number; url: string };
 

@@ -62,6 +62,10 @@ export interface PlanUpsertAssignment {
   name: string;
   description_markdown: string;
   visible: boolean;
+  duedate?: number;
+  allowsubmissionsfromdate?: number;
+  cutoffdate?: number;
+  grade?: number;
 }
 
 export interface PlanUpsertUrl {
@@ -109,6 +113,23 @@ function extractExternalUrl(c: Component): string {
     return (md as { url: string }).url;
   }
   return '';
+}
+
+function extractAssignmentMeta(c: Component): {
+  duedate?: number;
+  allowsubmissionsfromdate?: number;
+  cutoffdate?: number;
+  grade?: number;
+} {
+  const md = c.metadata;
+  if (!md || typeof md !== 'object') return {};
+  const m = md as Record<string, unknown>;
+  const result: { duedate?: number; allowsubmissionsfromdate?: number; cutoffdate?: number; grade?: number } = {};
+  if (typeof m.duedate === 'number' && Number.isFinite(m.duedate)) result.duedate = m.duedate;
+  if (typeof m.allowsubmissionsfromdate === 'number' && Number.isFinite(m.allowsubmissionsfromdate)) result.allowsubmissionsfromdate = m.allowsubmissionsfromdate;
+  if (typeof m.cutoffdate === 'number' && Number.isFinite(m.cutoffdate)) result.cutoffdate = m.cutoffdate;
+  if (typeof m.grade === 'number' && Number.isFinite(m.grade)) result.grade = m.grade;
+  return result;
 }
 
 function sectionName(lesson: LessonPlan): string {
@@ -166,6 +187,7 @@ export function planLesson(input: PlanInput): Plan {
         name,
         description_markdown: body,
         visible,
+        ...extractAssignmentMeta(c),
       });
       continue;
     }

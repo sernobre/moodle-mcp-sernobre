@@ -24,7 +24,7 @@ async function executeActivity(args: ActivityInput, ctx: ToolContext, toolName: 
     switch (args.type) {
       case 'page': fn = 'local_sernobre_mcp_upsert_page'; params = { ...common, content: renderMarkdown(args.content) }; break;
       case 'url': fn = 'local_sernobre_mcp_upsert_url'; params = { ...common, externalurl: args.external_url, display: args.display }; break;
-      case 'assign': fn = 'local_sernobre_mcp_upsert_assignment'; params = { ...common, intro: renderMarkdown(args.description), duedate: args.due_date, allowsubmissionsfromdate: args.submissions_from, cutoffdate: args.cutoff_date, grade: args.grade }; break;
+      case 'assign': fn = 'local_sernobre_mcp_upsert_assignment'; params = { ...common, duedate: args.due_date, allowsubmissionsfromdate: args.submissions_from, cutoffdate: args.cutoff_date, grade: args.grade }; break;
       case 'forum': fn = 'local_sernobre_mcp_upsert_forum'; params = { ...common, type: args.forum_type }; break;
     }
     const result = await ctx.client.call(fn, params) as { action: 'created' | 'updated'; cmid: number; instanceid: number; url: string };

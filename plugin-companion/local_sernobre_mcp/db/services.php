@@ -254,23 +254,64 @@ $services = [
         'functions' => [
             // Core functions used for site discovery and course management.
             'core_webservice_get_site_info',
-            // Native assignment file submission workflow.
-            'core_files_upload',
-            'mod_assign_save_submission',
-            'mod_assign_submit_for_grading',
+
+            // Course operations.
             'core_course_get_courses_by_field',
-            'core_course_get_contents',
             'core_course_create_courses',
             'core_course_update_courses',
+            'core_course_duplicate_course',
+            'core_course_get_contents',
             'core_course_edit_section',
             'core_course_edit_module',
+            'core_completion_get_activities_completion_status',
+
+            // Enrolment & users.
             'core_enrol_get_enrolled_users',
+            'core_enrol_get_users_courses',
+            'core_user_get_users_by_field',
+            'core_user_create_users',
+            'core_user_update_users',
+            'core_role_assign_roles',
+            'enrol_manual_enrol_users',
+            'enrol_manual_unenrol_users',
+
+            // Groups.
+            'core_group_create_groups',
+            'core_group_add_group_members',
+
+            // Calendar operations.
             'core_calendar_create_calendar_events',
             'core_calendar_get_calendar_events',
             'core_calendar_update_event_start_day',
+            'core_calendar_delete_calendar_events',
             'core_calendar_get_allowed_event_types',
+
+            // Forum operations.
             'mod_forum_get_forums_by_courses',
             'mod_forum_add_discussion',
+
+            // Assignment operations.
+            'mod_assign_get_submissions',
+            'mod_assign_get_submission_status',
+            'mod_assign_save_submission',
+            'mod_assign_submit_for_grading',
+            'mod_assign_save_grade',
+
+            // Quiz operations.
+            'mod_quiz_get_user_quiz_attempts',
+            'mod_quiz_get_attempt_review',
+
+            // Gradebook operations.
+            'gradereport_user_get_grade_items',
+
+            // Messaging.
+            'core_message_send_instant_messages',
+
+            // Badges.
+            'core_badges_get_user_badges',
+
+            // Files (submission workflow).
+            'core_files_upload',
 
             // Companion-plugin functions.
             'local_sernobre_mcp_upsert_forum',

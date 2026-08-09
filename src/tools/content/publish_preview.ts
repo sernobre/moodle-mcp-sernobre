@@ -47,12 +47,23 @@ export const publishPreviewTool: ToolDefinition<PublishPreviewInput> = {
 
     try {
       const parsed = JSON.parse(res.content[0]!.text) as {
-        section: { id: number; [k: string]: unknown };
+        section?: { id?: unknown; [k: string]: unknown };
         [k: string]: unknown;
       };
       const baseUrl = deriveBaseUrl(ctx);
-      const previewUrl = `${baseUrl}/course/view.php?id=${args.course_id}#section-${parsed.section.id}`;
-      const augmented = { ...parsed, preview_url: previewUrl };
+      const sectionId = parsed.section?.id;
+      const hasValidSectionId = typeof sectionId === 'number' && Number.isFinite(sectionId);
+      const previewUrl =
+        baseUrl !== '' && hasValidSectionId
+          ? `${baseUrl}/course/view.php?id=${args.course_id}#section-${sectionId}`
+          : undefined;
+      const augmented: Record<string, unknown> = { ...parsed, preview_url: previewUrl };
+      if (!previewUrl) {
+        augmented.warnings = [
+          ...((parsed.warnings as string[]) ?? []),
+          'preview_url could not be constructed (missing baseUrl or section id).',
+        ];
+      }
       return {
         content: [{ type: 'text', text: JSON.stringify(augmented) }],
       };
